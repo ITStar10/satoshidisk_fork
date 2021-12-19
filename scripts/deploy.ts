@@ -28,3 +28,8 @@ main().catch((error) => {
   console.error(error);
   process.exitCode = 1;
 });
+
+
+// BSC TestNet deployed:
+// 0x9835Da181CB9F4dB2364B33f6B46454A3de4ac66
+

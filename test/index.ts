@@ -26,14 +26,14 @@ describe ("SatoToken", function() {
     satoToken = await SatoToken.deploy();
 
     console.log("===========Account List==========");
-    accountList.forEach((item, index) => {
-      console.log(item.address)
+    accountList.forEach(async (item, index) => {
+      console.log(index, " - ", item.address)
 
-      satoToken.mintNFT(
+      await satoToken.mintNFT(
         item.address,
         "TestURI- " + index,
-        index * 100,
-        "Optional Description : " + index
+        (index + 1) * 1, // Price
+        (index + 1) * 100, // Count
       )
     });
   });
@@ -42,34 +42,29 @@ describe ("SatoToken", function() {
     expect(await satoToken.getNumberOfTokensMinted()).to.eq(accountList.length);
 
     for (let i = 0; i < accountList.length; i++) {
-      // console.log("Owner of ", (i+1), " : ", await satoToken.ownerOf(i+1));
-      expect(await satoToken.ownerOf(i+1)).to.equal(accountList[i].address);
+      // console.log("tokenCount for ", i+1, await satoToken.tokenCount(i+1, accountList[i].address));
+      expect(await satoToken.tokenCount(i+1, accountList[i].address)).to.equal((i+1) * 100);
+      expect(await satoToken.tokenPrice(i+1, accountList[i].address)).to.equal(i+1);
     }    
   })
 
   it ("NFT Buy test", async function () {
-    console.log("==============Befor================");
-    // console.log("Seller Balance : ", await accountList[1].getBalance());
-    // console.log("Buyer Balance : ", await owner.getBalance());
+    console.log("==============Balance List=============");
     accountList.forEach(async (item, index) => console.log(index, " : ", await item.getBalance()));
 
-    expect(await satoToken.ownerOf(2)).to.equal(accountList[1].address);
-    satoToken.buyNFT(2, {value: 200});
+    expect(await satoToken.tokenCount(2, accountList[1].address)).to.equal(200);
+    // Owner buy  tokenID"2" : count 3 = pric : 2 * 3 = 6
+    let count = ethers.BigNumber.from(3);
+    satoToken.buyNFT(2, accountList[1].address, count, {value: 6});
+    expect(await satoToken.tokenCount(2, accountList[1].address)).to.equal(200 - 3);
 
-    await satoToken.connect(accountList[4]).buyNFT(8, {value: 800});
-    // await expect(satoToken.connect(accountList[2].address).buyNFT(2, {value: 200}));
-    // expect(await satoToken.ownerOf(2)).to.equal(accountList[2].address);
+    // Account[2] buy tokenID"2" from account[1] : count 5 = price : 2 * 5 = 10
+    await satoToken.connect(accountList[2]).buyNFT(2, accountList[1].address, ethers.BigNumber.from(5), {value: 10});
+    expect(await satoToken.tokenCount(2, accountList[1].address)).to.equal(200 - 3 - 5);
 
-    await satoToken.connect(accountList[5]).buyNFT(1, {value: 100});
-
-    // Failed if money insufficient
-    await expect(satoToken.connect(accountList[3]).buyNFT(2, {value: 1})).to.be.revertedWith("insufficient money to buy");
-
-    console.log("==============After================");
-    accountList.forEach(async (item, index) => console.log(index, " : ", await item.getBalance()));
-
-    // Failed if money insufficient
-    await expect(satoToken.connect(accountList[3]).buyNFT(7, {value: 1})).to.be.revertedWith("insufficient money to buy");
-
+    // Buy revert because of "insufficient money"
+    await expect(satoToken.connect(accountList[2]).buyNFT(2, accountList[1].address, ethers.BigNumber.from(5), {value: 1})).to.be.revertedWith("insufficient money");
+    // Buy revert because of "Not enough token"
+    await expect(satoToken.connect(accountList[2]).buyNFT(2, accountList[0].address, ethers.BigNumber.from(5), {value: 10})).to.be.revertedWith("Not enough token");
   })
 });

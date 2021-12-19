@@ -7,7 +7,10 @@ import "@typechain/hardhat";
 import "hardhat-gas-reporter";
 import "solidity-coverage";
 
-const { privateKey, mnemonic } = require('./secret.json')
+// For BSC verification after deploy
+import "@nomiclabs/hardhat-ethers";
+
+const { privateKey, mnemonic } = require('./secret_real.json')
 
 dotenv.config();
 
@@ -30,20 +33,33 @@ const config: HardhatUserConfig = {
     localhost: {
       url: "http://127.0.0.1:8545",
       accounts: 
-      { mnemonic: mnemonic}        
+      { mnemonic: mnemonic}
+    },
+    testnet: {
+      url: "https://data-seed-prebsc-1-s1.binance.org:8545",
+      chainId: 97,
+      gasPrice: 20000000000,
+      accounts: [privateKey]
+    },
+    mainnet: {
+      url: "https://bsc-dataseed.binance.org/",
+      chainId: 56,
+      gasPrice: 20000000000,
+      accounts: [privateKey]
     },
     ropsten: {  
       url: process.env.ROPSTEN_URL || "",
       accounts:
         process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
     },
+
   },
   gasReporter: {
     enabled: process.env.REPORT_GAS !== undefined,
     currency: "USD",
   },
   etherscan: {
-    apiKey: process.env.ETHERSCAN_API_KEY,
+    apiKey: "SEHXVZNIGPXI3Y41QFVHJBJJ1E9PAZUMJT",
   },
 };
 
