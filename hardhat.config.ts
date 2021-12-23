@@ -13,7 +13,7 @@ import "@nomiclabs/hardhat-ethers";
 // newly added
 import "@openzeppelin/hardhat-upgrades";
 
-const { privateKey, mnemonic } = require('/mnt/Work/Sec/mainnet_secret.json')
+const { privateKey, mnemonic } = require('/mnt/Work/Sec/ganache_secret.json')
 
 dotenv.config();
 
