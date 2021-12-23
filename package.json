@@ -28,6 +28,7 @@
     "hardhat-gas-reporter": "^1.0.6",
     "prettier": "^2.5.1",
     "prettier-plugin-solidity": "^1.0.0-beta.19",
+    "sol-merger": "^3.1.0",
     "solhint": "^3.3.6",
     "solidity-coverage": "^0.7.17",
     "ts-node": "^10.4.0",
@@ -35,6 +36,11 @@
     "typescript": "^4.5.3"
   },
   "dependencies": {
-    "@openzeppelin/contracts": "^4.4.0"
+    "@openzeppelin/contracts": "^4.4.0",
+    "@openzeppelin/contracts-upgradeable": "^4.4.1",
+    "@openzeppelin/hardhat-upgrades": "^1.12.0"
+  },
+  "scripts": {
+    "build-contracts": "sol-merger \"./contracts/*.sol\" ./build"
   }
 }

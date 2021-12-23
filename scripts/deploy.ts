@@ -5,15 +5,15 @@
 // Runtime Environment's members available in the global scope.
 import { ethers } from "hardhat";
 
-async function main() {
-  // Hardhat always runs the compile task when running scripts with its command
-  // line interface.
-  //
-  // If this script is run directly using `node` you may want to call compile
-  // manually to make sure everything is compiled
-  // await hre.run('compile');
 
-  // We get the contract to deploy
+async function main() {
+
+  const [ deployer ] = await ethers.getSigners();
+
+  console.log("Deploying contracts with the account:", deployer.address);
+
+  console.log("Account balance:", (await deployer.getBalance()).toString);
+  
   const SatoToken = await ethers.getContractFactory("SatoToken");
   const satoToken = await SatoToken.deploy();
 
@@ -33,3 +33,9 @@ main().catch((error) => {
 // BSC TestNet deployed:
 // 0x9835Da181CB9F4dB2364B33f6B46454A3de4ac66
 
+// BSC testnet updated:
+// 0xb0E9ceD3Ee656fbb48778982D784A3380B0875d5
+
+
+// BSC Mainnet
+// 0x14936f58C88151f1c4f989378b72c3296A0a4d78

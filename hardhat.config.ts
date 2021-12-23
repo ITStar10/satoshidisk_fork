@@ -10,7 +10,10 @@ import "solidity-coverage";
 // For BSC verification after deploy
 import "@nomiclabs/hardhat-ethers";
 
-const { privateKey, mnemonic } = require('./secret_real.json')
+// newly added
+import "@openzeppelin/hardhat-upgrades";
+
+const { privateKey, mnemonic } = require('/mnt/Work/Sec/mainnet_secret.json')
 
 dotenv.config();
 

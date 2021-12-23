@@ -53,10 +53,12 @@ describe ("SatoToken", function() {
     accountList.forEach(async (item, index) => console.log(index, " : ", await item.getBalance()));
 
     expect(await satoToken.tokenCount(2, accountList[1].address)).to.equal(200);
-    // Owner buy  tokenID"2" : count 3 = pric : 2 * 3 = 6
+    // Owner buy  tokenID"2" : count 3 = price : 2 * 3 = 6
     let count = ethers.BigNumber.from(3);
     satoToken.buyNFT(2, accountList[1].address, count, {value: 6});
     expect(await satoToken.tokenCount(2, accountList[1].address)).to.equal(200 - 3);
+    expect(await satoToken.tokenPrice(2, accountList[0].address)).to.equal(2);
+
 
     // Account[2] buy tokenID"2" from account[1] : count 5 = price : 2 * 5 = 10
     await satoToken.connect(accountList[2]).buyNFT(2, accountList[1].address, ethers.BigNumber.from(5), {value: 10});

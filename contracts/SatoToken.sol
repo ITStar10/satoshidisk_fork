@@ -16,7 +16,7 @@ contract SatoToken is ERC721, ReentrancyGuard, Ownable {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
 
-    uint256 taxFee;
+    uint256 private taxFee;
 
     // map token id to struct
     mapping (uint256 => TokenInfo) private tokenInfoList;
@@ -88,6 +88,10 @@ contract SatoToken is ERC721, ReentrancyGuard, Ownable {
     function setTaxFee(uint256 newFee) public onlyOwner {
         require(newFee <= 20, "Tax can not be over 20%");
         taxFee = newFee;
+    }
+
+    function getTaxFee() external view returns(uint256) {
+        return taxFee;
     }
 
     // Mint a new Token
@@ -188,10 +192,10 @@ contract SatoToken is ERC721, ReentrancyGuard, Ownable {
         ownerInfo.tokenCount = ownerInfo.tokenCount - count;
 
         TokenPriceInfo memory buyerInfo = tokenOwners[tokenId][_msgSender()];
-        buyerInfo.tokenCount = buyerInfo.tokenCount + count;
         if (buyerInfo.tokenCount == 0) {
             buyerInfo.tokenPrice = tokenPrice;
         }
+        buyerInfo.tokenCount = buyerInfo.tokenCount + count;
 
         tokenOwners[tokenId][owner] = ownerInfo;
         tokenOwners[tokenId][_msgSender()] = buyerInfo;
@@ -248,4 +252,10 @@ contract SatoToken is ERC721, ReentrancyGuard, Ownable {
         bytes memory _data
     ) public virtual override {}
 
+    function withdraw() public payable onlyOwner {
+        uint balance = address(this).balance;
+        require(balance > 0, "No ether left to withdraw");
+        (bool success, ) = (msg.sender).call{value:balance}("");
+        require(success, "Transfer failed");
+    }
 }
